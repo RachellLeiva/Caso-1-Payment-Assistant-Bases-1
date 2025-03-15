@@ -1,7 +1,7 @@
 # Caso-1-Payment-Assistant-Bases-1
 
-## Estudiantes :  
-  Rachell Leiva Abarca 2024220640
+## Estudiantes : <br>
+  Rachell Leiva Abarca 2024220640 <br>
   Daniel Stiben Sequeira Requenes 2023282470
 
 ## Solo calificar entregable 1
