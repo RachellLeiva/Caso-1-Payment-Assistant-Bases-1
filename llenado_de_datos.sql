@@ -1,10 +1,24 @@
+--Insertamos 5 países a la tabla de países
+INSERT INTO countries (name, country_id) VALUES
+('Costa Rica', 1),
+('Estados Unidos', 2),
+('México', 3),
+('Japón', 4),
+('Canadá', 5);
+
+--Insertamos 3 idiomas a la tabla de idiomas
+INSERT INTO languages (name, culture,id_language) VALUES
+('Español',"ES", 1),
+('Inglés',"EN", 2),
+('Japonés',"JP",3);
+
 -- Insertamos 50 usuarios en la tabla users
 DELIMITER //
 
 CREATE PROCEDURE crear_usuarios()
 BEGIN
     DECLARE i INT DEFAULT 1;
-    -- bucle para insrtar
+    -- bucle para insrtar--
     WHILE i <= 50 DO
         -- generar valores aleatorios
         SET @id_user = i + 50;
@@ -12,11 +26,11 @@ BEGIN
         SET @cedula = LPAD(FLOOR(RAND() * 1000000000), 9, '0');
         SET @password = UNHEX(SHA2(CONCAT('password', i), 256)); 
         SET @id_language = FLOOR(1 + RAND() * 3);
-        SET @id_role = FLOOR(1 + RAND() * 5);
-
+		SET @countries_country_id = FLOOR(1 + RAND() * 5);
+        SET @email = CONCAT('user', i, '@example.com'); 
         -- insertar el usuario en la tabla
-        INSERT INTO mydb.users (id_user, name, cedula, password, id_language, id_role)
-        VALUES (@id_user, @name, @cedula, @password, @id_language, @id_role);
+        INSERT INTO mydb.users (id_user, name, cedula, contraseña, id_language,countries_country_id, email)
+        VALUES (@id_user, @name, @cedula, @password, @id_language,@countries_country_id, @email);
 
         SET i = i + 1;
     END WHILE;
@@ -25,6 +39,79 @@ END//
 DELIMITER ;
 
 CALL crear_usuarios();
+
+--Insertamos los horarios de los planes
+INSERT INTO schedules (id_schedules, name, recurrency_type, `repeat`, end_type, repetitions, end_date)
+VALUES
+(1, 'Plan Básico', 'Mensual', 1, 'Ilimitado', 'NA', NULL),
+(2, 'Plan Premium', 'Anual', 1, 'Ilimitado', 'NA', NULL),
+(3, 'Plan Estándar', 'Mensual', 1, 'Ilimitado', 'NA', NULL),
+(4, 'Plan Pro', 'Anual', 1, 'Ilimitado', 'NA', NULL);
+DELIMITER //
+
+--LLenamos la tabla de suscripción de usuarios con 20 registros
+CREATE PROCEDURE llenar_users_suscription()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    WHILE i <= 20 DO
+        INSERT INTO users_suscription (suscription_id, description, logo_url, startdate, enddate, deleted, enabled, id_user)
+        VALUES 
+        (i, 
+         CASE MOD(i, 4)
+             WHEN 0 THEN 'Plan Básico'
+             WHEN 1 THEN 'Plan Premium'
+             WHEN 2 THEN 'Plan Estándar'
+             ELSE 'Plan Pro'
+         END,
+         CONCAT('url_logo', MOD(i, 4) + 1), DATE_ADD('2024-01-01', INTERVAL FLOOR(RAND() * 90) DAY), NULL, 0, 1, 50 + i);
+        SET i = i + 1;
+    END WHILE;
+END//
+
+--LLenamos la tabla de plan por persona con 20 registros y relacionada a las tablas anteriores
+CREATE PROCEDURE llenar_plan_person()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    WHILE i <= 20 DO
+        INSERT INTO plan_person (id_plan_person, adquisition_date, enabled, id_user, id_schedules)
+        VALUES 
+        (100 + i,DATE_ADD('2024-01-01', INTERVAL FLOOR(RAND() * 120) DAY),1, 50 + i,MOD(i, 4) + 1);
+        SET i = i + 1;
+    END WHILE;
+END//
+
+--LLenamos la tabla de precios de plan con 20 registros y relacionada a las tablas anteriores
+CREATE PROCEDURE llenar_plan_prices()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    WHILE i <= 20 DO
+        INSERT INTO plan_prices (id_plan_prices, amount, recurrency_type, posttime, enddate, current, id_user_suscription, id_plan_person)
+        VALUES 
+        (i,
+         CASE MOD(i, 4)
+             WHEN 0 THEN 4000
+             WHEN 1 THEN 12000
+             WHEN 2 THEN 5000
+             ELSE 15000
+         END,
+         CASE MOD(i, 4)
+             WHEN 0 THEN 'Mensual'
+             WHEN 1 THEN 'Anual'
+             WHEN 2 THEN 'Mensual'
+             ELSE 'Anual'
+         END,
+         DATE_ADD('2024-01-01', INTERVAL FLOOR(RAND() * 100) DAY),
+         DATE_ADD('2024-06-01', INTERVAL FLOOR(RAND() * 100) DAY),
+         1, i, 100 + i);
+        SET i = i + 1;
+    END WHILE;
+END//
+
+DELIMITER ;
+
+CALL llenar_users_suscription();
+CALL llenar_plan_person();
+CALL llenar_plan_prices();
 
 
 
