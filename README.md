@@ -40,6 +40,123 @@ Por otra parte existe la tabla de recibo de transacción que se conecta a la de 
 #### [Llenado de datos](https://github.com/RachellLeiva/Caso-1-Payment-Assistant-Bases-1/blob/main/llenado_de_datos.sql)
 #### [Consultas](https://github.com/RachellLeiva/Caso-1-Payment-Assistant-Bases-1/blob/main/consultas.sql)
 
+## Script 1
+### Listar todos los usuarios de la plataforma que esten activos con su nombre completo, email, país de procedencia, y el total de cuánto han pagado en subscripciones desde el 2024 hasta el día de hoy, dicho monto debe ser en colones (20+ registros)
+
+SELECT 
+u.name AS 'Nombre Completo',
+u.email AS 'Correo Electrónico',
+c.name AS 'País de Procedencia',
+SUM(
+    CASE 
+        WHEN pp.recurrency_type = 'Mensual' THEN 
+                    CASE 
+                        WHEN us.startdate < '2024-01-01' 
+                            THEN TIMESTAMPDIFF(MONTH, '2024-01-01', NOW()) 
+                        ELSE TIMESTAMPDIFF(MONTH, us.startdate, NOW()) 
+                    END * pp.amount
+            WHEN pp.recurrency_type = 'Anual'
+                THEN 
+                    CASE 
+                        -- Si la fecha de inicio fue antes del 2024, pero hubo una renovación en 2024
+                        WHEN us.startdate < '2024-01-01' 
+                            THEN 
+                                CASE 
+                                    WHEN YEAR(DATE_ADD(us.startdate, INTERVAL 1 YEAR)) = 2024 
+                                        THEN pp.amount
+                                    WHEN YEAR(DATE_ADD(us.startdate, INTERVAL 2 YEAR)) = 2024 
+                                        THEN pp.amount
+                                    ELSE 0
+                                END
+                        -- Si inició en 2024
+                        WHEN YEAR(us.startdate) = 2024 
+                            THEN pp.amount
+                        ELSE 0
+                    END
+            ELSE 0
+        END
+    ) AS 'Total Pagado (en colones)'
+FROM 
+    users u
+JOIN 
+    countries c ON u.countries_country_id = c.country_id
+JOIN 
+    users_suscription us ON u.id_user = us.id_user
+JOIN 
+    plan_person ppn ON u.id_user = ppn.id_user
+JOIN 
+    plan_prices pp ON ppn.id_plan_person = pp.id_plan_person
+WHERE 
+    us.enabled = 1
+GROUP BY 
+    u.id_user
+ORDER BY 
+    `Total Pagado (en colones)` DESC;
+    
+|Nombre Completo|Correo Electrónico|País de Procedencia|Total Pagado (en colones)|
+|---------------|------------------|-------------------|-------------------------|
+|User-7         |user7@example.com |Japón              |62400                    |
+|User-13        |user13@example.com|Estados Unidos     |55000                    |
+|User-3         |user3@example.com |México             |55000                    |
+|User-17        |user17@example.com|Estados Unidos     |52800                    |
+|User-5         |user5@example.com |México             |49500                    |
+|User-15        |user15@example.com|Japón              |49500                    |
+|User-20        |user20@example.com|Estados Unidos     |46200                    |
+|User-19        |user19@example.com|México             |46200                    |
+|User-9         |user9@example.com |Japón              |46200                    |
+|User-11        |user11@example.com|México             |44000                    |
+|User-1         |user1@example.com |Canadá             |44000                    |
+|User-6         |user6@example.com |Costa Rica         |38500                    |
+|User-16        |user16@example.com|Costa Rica         |28000                    |
+|User-8         |user8@example.com |Costa Rica         |16000                    |
+|User-18        |user18@example.com|Canadá             |16000                    |
+|User-4         |user4@example.com |México             |15000                    |
+|User-14        |user14@example.com|Canadá             |15000                    |
+|User-12        |user12@example.com|Costa Rica         |12000                    |
+|User-2         |user2@example.com |Japón              |12000                    |
+|User-10        |user10@example.com|Costa Rica         |11000                    |
+
+
+
+## Script 2 
+### Listar todas las personas con su nombre completo e email, los cuales le queden menos de 15 días para tener que volver a pagar una nueva subscripción
+SELECT 
+    u.name AS nombre,
+    u.email
+FROM 
+    users u
+JOIN 
+    users_suscription us ON u.id_user = us.id_user
+WHERE 
+    us.enabled = 1
+    AND (
+        (DATE_ADD(us.startdate, INTERVAL 1 MONTH) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 15 DAY)
+            AND us.suscription_id IN 
+            (SELECT suscription_id FROM plan_prices WHERE recurrency_type = 'Mensual')
+        )
+        OR
+        (DATE_ADD(us.startdate, INTERVAL 1 YEAR) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 15 DAY)
+            AND us.suscription_id IN 
+            (SELECT suscription_id FROM plan_prices WHERE recurrency_type = 'Anual')
+        ) );
+
+|nombre |email             |
+|-------|------------------|
+|User-1 |user1@example.com |
+|User-3 |user3@example.com |
+|User-4 |user4@example.com |
+|User-5 |user5@example.com |
+|User-6 |user6@example.com |
+|User-8 |user8@example.com |
+|User-11|user11@example.com|
+|User-13|user13@example.com|
+|User-15|user15@example.com|
+|User-17|user17@example.com|
+|User-18|user18@example.com|
+|User-19|user19@example.com|
+|User-20|user20@example.com|
+
+
 ## Script 3
 
 #### Un ranking del top 15 de usuarios que más uso le dan a la aplicación y el top 15 que menos uso le dan a la aplicación
