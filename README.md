@@ -32,8 +32,15 @@ Por otra parte existe la tabla de recibo de transacción que se conecta a la de 
 
 
 
+# Scripts
 
-# Script 3
+### Links a los scripts:
+
+#### [Creación de la base de datos]()
+#### [Llenado de datos](https://github.com/RachellLeiva/Caso-1-Payment-Assistant-Bases-1/blob/main/llenado_de_datos.sql)
+#### [Consultas](https://github.com/RachellLeiva/Caso-1-Payment-Assistant-Bases-1/blob/main/consultas.sql)
+
+## Script 3
 
 #### Un ranking del top 15 de usuarios que más uso le dan a la aplicación y el top 15 que menos uso le dan a la aplicación
 #### Descendente:
@@ -93,7 +100,7 @@ LIMIT 15;
 
 
 
-# Script 4
+## Script 4
 
 #### Determinar cuáles son los análisis donde más está fallando la AI, encontrar los casos, situaciones, interpretaciones, halucinaciones o errores donde el usuario está teniendo más problemas en hacer que la AI determine correctamente lo que se desea hacer, rankeando cada problema de mayor a menor cantidad de ocurrencias entre un rango de fechas
 
