@@ -43,6 +43,7 @@ Por otra parte existe la tabla de recibo de transacción que se conecta a la de 
 ## Script 1
 ### Listar todos los usuarios de la plataforma que esten activos con su nombre completo, email, país de procedencia, y el total de cuánto han pagado en subscripciones desde el 2024 hasta el día de hoy, dicho monto debe ser en colones (20+ registros)
 
+```sql
 SELECT 
 u.name AS 'Nombre Completo',
 u.email AS 'Correo Electrónico',
@@ -91,8 +92,9 @@ WHERE
 GROUP BY 
     u.id_user
 ORDER BY 
-    `Total Pagado (en colones)` DESC;
-    
+    `Total Pagado (en colones)` DESC; 
+```
+
 |Nombre Completo|Correo Electrónico|País de Procedencia|Total Pagado (en colones)|
 |---------------|------------------|-------------------|-------------------------|
 |User-7         |user7@example.com |Japón              |62400                    |
@@ -120,6 +122,7 @@ ORDER BY
 
 ## Script 2 
 ### Listar todas las personas con su nombre completo e email, los cuales le queden menos de 15 días para tener que volver a pagar una nueva subscripción
+```sql
 SELECT 
     u.name AS nombre,
     u.email
@@ -139,6 +142,7 @@ WHERE
             AND us.suscription_id IN 
             (SELECT suscription_id FROM plan_prices WHERE recurrency_type = 'Anual')
         ) );
+```
 
 |nombre |email             |
 |-------|------------------|
