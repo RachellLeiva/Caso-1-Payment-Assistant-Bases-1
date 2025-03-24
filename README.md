@@ -4,9 +4,6 @@
   Rachell Leiva Abarca 2024220640 <br>
   Daniel Stiben Sequeira Requenes 2023282470
 
-## Solo calificar entregable 1
-
-
 Esta base de datos es destinada para un payment assistant que por medio de guías de voz y notificaciones realiza pagos de servicios de manera automática cada cierto tiempo establecido, pero antes de realizar el pago debe haber una confirmación.
 
 
