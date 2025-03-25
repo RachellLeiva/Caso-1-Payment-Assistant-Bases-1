@@ -25,12 +25,13 @@ BEGIN
         SET @name = CONCAT('User-', i);
         SET @cedula = LPAD(FLOOR(RAND() * 1000000000), 9, '0');
         SET @password = UNHEX(SHA2(CONCAT('password', i), 256)); 
+	SET @email = CONCAT('user', i, '@example.com'); 
         SET @id_language = FLOOR(1 + RAND() * 3);
-		SET @countries_country_id = FLOOR(1 + RAND() * 5);
-        SET @email = CONCAT('user', i, '@example.com'); 
+	SET @country_id = FLOOR(1 + RAND() * 5);
+        
         -- insertar el usuario en la tabla
-        INSERT INTO mydb.users (id_user, name, cedula, contraseña, id_language,countries_country_id, email)
-        VALUES (@id_user, @name, @cedula, @password, @id_language,@countries_country_id, @email);
+        INSERT INTO mydb.users (id_user, name, cedula, contraseña, email, id_language,country_id)
+        VALUES (@id_user, @name, @cedula, @password, @email, @id_language,@country_id);
 
         SET i = i + 1;
     END WHILE;
