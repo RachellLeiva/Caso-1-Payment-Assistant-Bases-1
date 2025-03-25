@@ -10,7 +10,7 @@
 
 ### Links a los scripts:
 
-#### [Creación de la base de datos]()
+#### [Creación de la base de datos](https://github.com/RachellLeiva/Caso-1-Payment-Assistant-Bases-1/blob/main/creacion_database.sql)
 #### [Llenado de datos](https://github.com/RachellLeiva/Caso-1-Payment-Assistant-Bases-1/blob/main/llenado_de_datos.sql)
 #### [Consultas](https://github.com/RachellLeiva/Caso-1-Payment-Assistant-Bases-1/blob/main/consultas.sql)
 
